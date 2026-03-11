@@ -22,7 +22,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(httpBasic -> {}); // lambda style
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("http://localhost:3000/userDashboard", true) // redirect to React frontend after login
+                )
+                .httpBasic(httpBasic -> {});  // lambda style
 
         return http.build();
     }

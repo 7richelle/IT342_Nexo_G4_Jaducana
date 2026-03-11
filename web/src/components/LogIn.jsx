@@ -4,7 +4,6 @@ import "../css/SignUpPage.css";
 import NexoLogo from "../assets/NEXO.png";
 
 const LogIn = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +19,12 @@ const LogIn = () => {
     console.log("Password:", password);
 
     // redirect to dashboard
-  navigate("/userDashboard");
+    navigate("/userDashboard");
+  };
+
+  // 🔹 Redirect user to backend Google OAuth endpoint
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   return (
@@ -55,7 +59,6 @@ const LogIn = () => {
           </p>
 
           <form onSubmit={handleSubmit}>
-
             <label>Email</label>
             <input
               type="email"
@@ -76,6 +79,24 @@ const LogIn = () => {
 
             <button type="submit">Log In</button>
           </form>
+
+          {/* 🔹 Google Login Button */}
+          <div style={{ margin: "20px 0" }}>
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              style={{
+                backgroundColor: "#4285F4",
+                color: "white",
+                padding: "10px 20px",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Sign in with Google
+            </button>
+          </div>
 
           <p className="login-text">
             Don’t have an account? <Link to="/">Join the Nexus</Link>

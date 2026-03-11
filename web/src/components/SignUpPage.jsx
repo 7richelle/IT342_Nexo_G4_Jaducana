@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { Link,useNavigate  } from "react-router-dom";
+
 import "../css/SignUpPage.css";
 import NexoLogo from "../assets/NEXO.png";
-import { Link,useNavigate  } from "react-router-dom";
+
 
 
 const SignUpPage = () => {
@@ -9,7 +11,8 @@ const SignUpPage = () => {
   const navigate = useNavigate();
   
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
@@ -24,7 +27,8 @@ const SignUpPage = () => {
         },
         body: JSON.stringify({
           email,
-          username,
+           firstname,
+          lastname,
           password,
           confirmPassword
         })
@@ -88,13 +92,21 @@ const SignUpPage = () => {
               required
             />
 
-            <label>Username</label>
-            <input
-              type="text"
-              placeholder="Username"
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+           <label>First Name</label>
+           <input
+             type="text"
+            placeholder="First Name"
+           onChange={(e) => setFirstname(e.target.value)}
+         required
+          />
+
+<label>Last Name</label>
+<input
+  type="text"
+  placeholder="Last Name"
+  onChange={(e) => setLastname(e.target.value)}
+  required
+/>
 
             <label>Password</label>
             <input
