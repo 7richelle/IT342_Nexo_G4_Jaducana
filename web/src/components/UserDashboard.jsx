@@ -1,67 +1,63 @@
 import React, { useState, useEffect } from "react";
 import "../css/UserDashboard.css";
 import DashboardHeader from "./header/DashboardHeader.jsx";
-
+import { useNavigate } from "react-router-dom";
 const heroImages = [
   "https://i.pinimg.com/1200x/7b/b7/47/7bb7471424350e75d03e6122f5033a5c.jpg",
   "https://i.pinimg.com/1200x/35/bf/b6/35bfb6e07653f0c688b2b9528489f520.jpg",
   "https://i.pinimg.com/1200x/18/be/1f/18be1f7af1db345172b4096613fef6a2.jpg"
 ];
 
-const events = [
-  {
-    id: 1,
-    title: "Tech Innovators Meetup",
-    date: "MAR 20",
-    location: "Cebu IT Park",
-    category: "Technology",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865"
-  },
-  {
-    id: 2,
-    title: "Startup Networking Night",
-    date: "APR 02",
-    location: "Ayala Center Cebu",
-    category: "Business",
-    image: "https://images.unsplash.com/photo-1551818255-e6e10975bc17"
-  },
-  {
-    id: 3,
-    title: "Cebu Music Festival",
-    date: "MAY 15",
-    location: "SM Seaside Arena",
-    category: "Music",
-    image: "https://images.unsplash.com/photo-1506157786151-b8491531f063"
-  },
-  {
-    id: 4,
-    title: "React Development Workshop",
-    date: "JUN 10",
-    location: "CIT University",
-    category: "Workshop",
-    image: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f"
-  },
-  {
-    id: 5,
-    title: "Photography Masterclass",
-    date: "JUL 05",
-    location: "Cebu Business Park",
-    category: "Art",
-    image: "https://i.pinimg.com/736x/5f/88/af/5f88affad8bb9a947ac9f66fb5334c3f.jpg"
-  },
-  {
-    id: 6,
-    title: "Fitness Bootcamp",
-    date: "AUG 12",
-    location: "Cebu City Sports Center",
-    category: "Sports",
-    image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438"
-  }
-];
-
 const Dashboard = () => {
 
-    const [currentImage, setCurrentImage] = useState(0);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentImage, setCurrentImage] = useState(0);
+  const navigate = useNavigate();
+ const formatEventDate = (event) => {
+  // ✅ SINGLE EVENT
+  if (event.eventType === "single" && event.date) {
+    const cleanDate = event.date.split("T")[0];
+    const date = new Date(cleanDate + "T00:00:00");
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+    }).toUpperCase();
+  }
+
+  // ✅ RECURRING EVENT → use startDate
+  if (event.eventType === "recurring" && event.startDate) {
+    const cleanDate = event.startDate.split("T")[0];
+    const date = new Date(cleanDate + "T00:00:00");
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+    }).toUpperCase();
+  }
+
+  return "N/A";
+};
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        console.log("Fetching events from http://localhost:8080/api/events");
+        const res = await fetch("http://localhost:8080/api/events");
+        console.log("Response status:", res.status);
+        const data = await res.json();
+        console.log("Events fetched:", data);
+        setEvents(data);
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  fetchEvents();
+}, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -101,6 +97,23 @@ const Dashboard = () => {
       </section>
 
 
+      {/* USER REGISTRATIONS STATUS */}
+      <section className="user-status-section">
+        <div className="status-card">
+          <div className="status-content">
+            <h2>My Registrations</h2>
+            <p>Check the status of your event registrations and payments</p>
+            <button
+              className="status-btn"
+              onClick={() => navigate('/payment-status')}
+            >
+              View Payment Status
+            </button>
+          </div>
+          <div className="status-icon">📋</div>
+        </div>
+      </section>
+
       {/* EVENTS */}
       <section className="events-section">
 
@@ -109,32 +122,54 @@ const Dashboard = () => {
           <span>View All</span>
         </div>
 
-        <div className="events-grid">
+        {loading ? (
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <p>Loading events...</p>
+          </div>
+        ) : events.length === 0 ? (
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <p>No events found. Check the console for more details.</p>
+          </div>
+        ) : (
+          <div className="events-grid">
 
-          {events.map((event) => (
-            <div key={event.id} className="event-card">
+            {events.map((event) => (
+              <div key={event.id} className="event-card">
 
-              <div className="event-image">
-                <img src={event.image} alt={event.title}/>
-                <span className="event-date">{event.date}</span>
+                <div className="event-image">
+                 <img
+    src={event.imageUrl || "https://via.placeholder.com/300"}
+    alt={event.eventName}
+  />
+                 <span className="event-date">
+   {formatEventDate(event)}
+  </span>
+                </div>
+
+                <div className="event-details">
+
+                  <span className="event-category">{event.category}</span>
+
+                  <h3>{event.eventName}</h3>
+
+  <p className="event-location">
+    {event.locationName}, {event.city}
+  </p>
+
+                 <button
+    className="view-btn"
+    onClick={() => navigate(`/event/${event.id}`)}
+  >
+    View Event
+  </button>
+
+                </div>
+
               </div>
+            ))}
 
-              <div className="event-details">
-
-                <span className="event-category">{event.category}</span>
-
-                <h3>{event.title}</h3>
-
-                <p className="event-location">{event.location}</p>
-
-                <button className="view-btn">View Event</button>
-
-              </div>
-
-            </div>
-          ))}
-
-        </div>
+          </div>
+        )}
 
       </section>
 

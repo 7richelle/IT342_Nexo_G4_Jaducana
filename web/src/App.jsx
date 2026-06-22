@@ -6,19 +6,43 @@ import HomePage from './components/HomePage'
 import UserDashboard from './components/UserDashboard'
 import UserProfile from './components/UserProfile'
 import AdminDashboard from './components/AdminDashboard'
+import AdminProfile from './components/AdminProfile'
+import CreateEvent from './components/CreateEvent'
 import OAuthSuccess from './components/OAuthSuccess'
+import EventDetails from "./components/EventDetails";
+import ManageEvent from "./components/ManageEvent";
+import EditEvent from "./components/EditEvent";
+import RegisterEvent from "./components/RegisterEvent";
+import PaymentPage from "./components/PaymentPage";
+import Users from "./components/Users";
+import PaymentManagement from "./components/PaymentManagement";
+import UserPaymentStatus from "./components/UserPaymentStatus";
 function App() {
   
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<SignUpPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/userDashboard" element={<UserDashboard />} />
          <Route path="/userProfile" element={<UserProfile />} />
-        <Route path="/adminDashboard" element={<AdminDashboard />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />}/>
+        
+        
+        <Route path="/admin-profile" element={<AdminProfile />}/>
+          
+        <Route path="/register-event/:id" element={<RegisterEvent />} />
+        <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/oauth-success" element={<OAuthSuccess />} />
+        <Route path="/event/:id" element={<EventDetails />} />
+        <Route path="/manage-events" element={<ManageEvent />} />
+<Route path="/edit-event/:id" element={<EditEvent />} />
+<Route path="/payment" element={<PaymentPage />} />
+<Route path="/users" element={<Users />} />
+<Route path="/payment-management" element={<PaymentManagement />} />
+<Route path="/payment-status" element={<UserPaymentStatus />} />
        </Routes>
        </Router>
   )
